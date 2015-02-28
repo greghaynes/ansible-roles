@@ -1,0 +1,28 @@
+- name: greghaynes | Install apt dependencies
+  apt: name={{ item }}
+  sudo: yes
+  with_items:
+    - zsh
+    - tmux
+    - git
+    - vim
+- name: greghaynes | Assert user
+  user: name=greghaynes shell=/bin/zsh
+  sudo: yes
+- name: greghaynes | Download oh-my-zsh
+  git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/greghaynes/.oh-my-zsh
+- name: greghaynes | Download vundle
+  git: repo=https://github.com/gmarik/Vundle.vim.git dest=/home/greghaynes/.vim/bundle/Vundle.vim
+- name: greghaynes | install vundle
+  command: vim +PluginInstall +qall
+- name: greghaynes | Create projects dir
+  file: path=/home/greghaynes/Projects state=directory mode=0755 owner=greghaynes
+- name: greghaynes | Download DotFiles repo
+  git: repo=https://github.com/greghaynes/DotFiles dest=/home/greghaynes/Projects/DotFiles
+- name: greghaynes | link dotfiles
+  file: path=/home/greghaynes/{{ item }} src=/home/greghaynes/Projects/DotFiles/{{ item }} state=link mode=0644 owner=greghaynes
+  with_items:
+    - .gitconfig
+    - .tmux.conf
+    - .vimrc
+    - .zshrc
