@@ -1,0 +1,27 @@
+- hosts: dib-builder
+  vars:
+    dib_venv_dir: /opt/stack/venvs/openstack/diskimage-builder
+    dib_image_type: qcow2
+    dib_image_path: /home/greghaynes/images/dib-image
+    dib_elements: ubuntu vm
+    dib_elements_path: ""
+  tasks:
+  - name: build image
+    shell: >
+      PATH=$PATH:{{ dib_venv_dir }}/bin
+      ELEMENTS_PATH={{ dib_elements_path }}
+      disk-image-create -t {{ dib_image_type }} -o {{ dib_image_path }} {{ dib_elements }}
+    tags: [dib-build]
+- hosts: hypervisor
+  vars:
+    dib_image_dir: /home/greghaynes/images
+    hypervisor_images_dir: /home/greghaynes/dib-images
+    image_name: dib-image
+    image_type: qcow2
+  tasks:
+  - name: Upload image to hypervisor
+    command: scp "{{ dib_image_dir }}/{{ image_name }}.{{image_type }}" {{ inventory_hostname }}:"{{ hypervisor_images_dir }}/{{ image_name }}.{{ image_type }}"
+    delegate_to: localhost
+    tags: [dib-upload]
+  - name: Define VM
+  :

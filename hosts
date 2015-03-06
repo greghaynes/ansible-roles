@@ -1,1 +1,8 @@
+[dev]
 localhost
+
+[dib-builder]
+localhost
+
+[hypervisor]
+bm003.opus.greghaynes.net

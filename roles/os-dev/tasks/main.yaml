@@ -1,0 +1,52 @@
+- name: Install apt dependencies
+  apt: name={{ item }}
+  sudo: yes
+  with_items:
+    - git-review
+    - libffi-dev
+    - libmysqlclient-dev
+    - python-dev
+    - python-virtualenv
+    - qemu-utils
+- name: clone openstack repos
+  git: repo=https://git.openstack.org/openstack/{{ item }} dest={{ repo_dir }}/openstack/{{ item }}
+  with_items:
+    - barbican
+    - diskimage-builder
+    - dib-utils
+    - ironic
+    - tripleo-incubator
+    - tripleo-image-elements
+    - tripleo-heat-templates
+- name: clone openstack-infra repos
+  git: repo=https://git.openstack.org/openstack-infra/{{ item }} dest={{ repo_dir }}/openstack-infra/{{ item }}
+  with_items:
+    - nodepool
+    - project-config
+    - storyboard
+    - system-config
+    - tripleo-ci
+    - zuul
+- name: clone openstack-dev repos
+  git: repo=https://git.openstack.org/openstack-dev/{{ item }} dest={{ repo_dir }}/openstack-dev/{{ item }}
+  with_items:
+    - devstack
+- name: clone stackforge repos
+  git: repo=https://git.openstack.org/stackforge/{{ item }} dest={{ repo_dir }}/stackforge/{{ item }}
+  with_items:
+    - os-ansible-deployment
+- name: clone github/greghaynes repos
+  git: repo=git@github.com:greghaynes/{{ item }} dest={{ repo_dir }}/{{ item }}
+  with_items:
+    - ursula
+- name: Install openstack tools in virtualenv
+  pip: name=file://{{ repo_dir }}/openstack/{{ item }} virtualenv={{ venv_dir }}/openstack/{{ item }} extra_args=-U
+  sudo: yes
+  with_items:
+    - diskimage-builder
+- name: Install openstack-infra tools in virtualenv
+  pip: name=file://{{ repo_dir }}/openstack-infra/{{ item }} virtualenv={{ venv_dir }}/openstack-infra/{{ item }} extra_args=-U
+  sudo: yes
+  with_items:
+    - nodepool
+    - zuul

@@ -1,3 +1,4 @@
-- hosts: all
+- hosts: dev
   roles:
     - greghaynes
+    - { role: os-dev, venv_dir: /opt/stack/venvs, repo_dir: /home/greghaynes/Projects }
