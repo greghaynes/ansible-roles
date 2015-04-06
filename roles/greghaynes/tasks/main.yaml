@@ -1,5 +1,16 @@
-- name: Install apt dependencies
+- name: Install Debian dependencies
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   apt: name={{ item }}
+  sudo: yes
+  with_items:
+    - zsh
+    - tmux
+    - git
+    - vim
+    - python-virtualenv
+- name: Install SuSe dependencies
+  when: ansible_distribution == 'openSUSE'
+  zypper: name={{ item }}
   sudo: yes
   with_items:
     - zsh
@@ -16,6 +27,12 @@
   git: repo=https://github.com/gmarik/Vundle.vim.git dest=/home/greghaynes/.vim/bundle/Vundle.vim
 - name: install vundle
   command: vim +PluginInstall +qall
+- name: Make vim autoload dir
+  file: path=/home/greghaynes/.vim/autoload state=directory mode=0755 owner=greghaynes
+- name: Install Pathogen
+  get_url: url=https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim dest=/home/greghaynes/.vim/autoload/pathogen.vim mode=0644 owner=greghaynes
+- name: Install vim solarized colors
+  git: repo=https://github.com/altercation/vim-colors-solarized dest=/home/greghaynes/.vim/bundle/vim-colors-solarized.git
 - name: Create projects dir
   file: path=/home/greghaynes/Projects state=directory mode=0755 owner=greghaynes
 - name: Download github projects

@@ -1,13 +1,27 @@
 - name: Install apt dependencies
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   apt: name={{ item }}
   sudo: yes
   with_items:
     - git-review
     - libffi-dev
+    - libssl-dev
     - libmysqlclient-dev
     - python-dev
     - python-virtualenv
     - qemu-utils
+- name: Install SuSe dependencies
+  when: ansible_distribution == 'openSUSE'
+  zypper: name={{ item }}
+  sudo: yes
+  with_items:
+    - git-review
+    - libffi-devel
+    - libmysqlclient-devel
+    - libopenssl-devel
+    - devel_python
+    - python-virtualenv
+    - qemu
 - name: clone openstack repos
   git: repo=https://git.openstack.org/openstack/{{ item }} dest={{ repo_dir }}/openstack/{{ item }}
   with_items:
