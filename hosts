@@ -1,8 +1,5 @@
 [dev]
-localhost
+10.31.101.108 ansible_ssh_user=root
 
-[dib-builder]
-localhost
-
-[hypervisor]
-bm003.opus.greghaynes.net
+[mumble]
+10.31.101.109 ansible_ssh_user=root

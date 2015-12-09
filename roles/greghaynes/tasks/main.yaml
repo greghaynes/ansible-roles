@@ -21,6 +21,10 @@
 - name: Assert user
   user: name=greghaynes shell=/bin/zsh
   sudo: yes
+- name: Assert ssh config dir
+  file: path=/home/greghaynes/.ssh state=directory owner=greghaynes group=greghaynes mode=0700
+- name: Copy ssh authorized_keys
+  copy: src=authorized_keys dest=/home/greghaynes/.ssh/authorized_keys owner=greghaynes group=greghaynes mode=0600
 - name: Download oh-my-zsh
   git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/greghaynes/.oh-my-zsh
 - name: Download vundle
@@ -36,13 +40,13 @@
 - name: Create projects dir
   file: path=/home/greghaynes/Projects state=directory mode=0755 owner=greghaynes
 - name: Download github projects
-  git: repo=git@github.com:greghaynes/{{ item }} dest=/home/greghaynes/Projects/{{ item }}
+  git: repo=https://github.com/greghaynes/{{ item }} dest=/home/greghaynes/Projects/greghaynes/{{ item }}
   with_items:
     - dib-dev-deploy
     - DotFiles
     - Mailase
 - name: link dotfiles
-  file: path=/home/greghaynes/{{ item }} src=/home/greghaynes/Projects/DotFiles/{{ item }} state=link mode=0644 owner=greghaynes
+  file: path=/home/greghaynes/{{ item }} src=/home/greghaynes/Projects/greghaynes/DotFiles/{{ item }} state=link mode=0644 owner=greghaynes
   with_items:
     - .gitconfig
     - .tmux.conf
