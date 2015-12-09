@@ -1,0 +1,9 @@
+- hosts: dev
+  roles:
+    - development
+- hosts: irc
+  roles:
+    - irc
+- hosts: mumble
+  roles:
+    - mumble

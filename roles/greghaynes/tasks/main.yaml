@@ -4,20 +4,12 @@
   sudo: yes
   with_items:
     - zsh
-    - tmux
-    - git
-    - vim
-    - python-virtualenv
 - name: Install SuSe dependencies
   when: ansible_distribution == 'openSUSE'
   zypper: name={{ item }}
   sudo: yes
   with_items:
     - zsh
-    - tmux
-    - git
-    - vim
-    - python-virtualenv
 - name: Assert user
   user: name=greghaynes shell=/bin/zsh
   sudo: yes
@@ -25,30 +17,19 @@
   file: path=/home/greghaynes/.ssh state=directory owner=greghaynes group=greghaynes mode=0700
 - name: Copy ssh authorized_keys
   copy: src=authorized_keys dest=/home/greghaynes/.ssh/authorized_keys owner=greghaynes group=greghaynes mode=0600
+  remote_user: greghaynes
 - name: Download oh-my-zsh
+  remote_user: greghaynes
   git: repo=https://github.com/robbyrussell/oh-my-zsh dest=/home/greghaynes/.oh-my-zsh
-- name: Download vundle
-  git: repo=https://github.com/gmarik/Vundle.vim.git dest=/home/greghaynes/.vim/bundle/Vundle.vim
-- name: install vundle
-  command: vim +PluginInstall +qall
-- name: Make vim autoload dir
-  file: path=/home/greghaynes/.vim/autoload state=directory mode=0755 owner=greghaynes
-- name: Install Pathogen
-  get_url: url=https://github.com/tpope/vim-pathogen/raw/master/autoload/pathogen.vim dest=/home/greghaynes/.vim/autoload/pathogen.vim mode=0644 owner=greghaynes
-- name: Install vim solarized colors
-  git: repo=https://github.com/altercation/vim-colors-solarized dest=/home/greghaynes/.vim/bundle/vim-colors-solarized.git
-- name: Create projects dir
-  file: path=/home/greghaynes/Projects state=directory mode=0755 owner=greghaynes
-- name: Download github projects
+- name: Download DotFiles
+  remote_user: greghaynes
   git: repo=https://github.com/greghaynes/{{ item }} dest=/home/greghaynes/Projects/greghaynes/{{ item }}
   with_items:
-    - dib-dev-deploy
     - DotFiles
-    - Mailase
 - name: link dotfiles
+  remote_user: greghaynes
   file: path=/home/greghaynes/{{ item }} src=/home/greghaynes/Projects/greghaynes/DotFiles/{{ item }} state=link mode=0644 owner=greghaynes
   with_items:
     - .gitconfig
     - .tmux.conf
-    - .vimrc
     - .zshrc

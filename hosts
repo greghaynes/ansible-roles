@@ -1,5 +1,8 @@
 [dev]
 10.31.101.108 ansible_ssh_user=root
 
+[irc]
+10.31.101.110 ansible_ssh_user=root
+
 [mumble]
-10.31.101.109 ansible_ssh_user=root
+10.31.101.111 ansible_ssh_user=root

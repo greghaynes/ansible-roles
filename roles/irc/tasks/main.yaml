@@ -1,0 +1,19 @@
+- name: Install Debian dependencies
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  apt: name={{ item }}
+  sudo: yes
+  with_items:
+    - weechat
+    - tmux
+- name: Ensure weechat config dir
+  remote_user: greghaynes
+  file: path=/home/greghaynes/.weechat state=directory owner=greghaynes group=greghaynes mode=0700
+- name: Weechat irc config
+  remote_user: greghaynes
+  template: src=irc.conf dest=/home/greghaynes/.weechat/irc.conf owner=greghaynes group=greghaynes mode=0600
+- name: Weechat irc config
+  remote_user: greghaynes
+  copy: src={{ item }} dest=/home/greghaynes/.weechat/{{ item }} owner=greghaynes group=greghaynes mode=0600
+  with_items:
+    - weechat.conf
+    - buffers.conf
