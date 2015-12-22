@@ -7,3 +7,12 @@
 - hosts: mumble
   roles:
     - mumble
+- hosts: workdev
+  roles:
+    - vim
+- hosts: loadbalancer
+  roles:
+    - loadbalancer
+- hosts: ubuntu-mirrors
+  roles:
+    - ubuntu-mirror

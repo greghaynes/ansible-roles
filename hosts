@@ -1,8 +1,17 @@
 [dev]
-10.31.101.108 ansible_ssh_user=root
+10.31.101.115 ansible_ssh_user=root
 
 [irc]
-10.31.101.110 ansible_ssh_user=root
+10.31.101.114 ansible_ssh_user=root
 
 [mumble]
-10.31.101.111 ansible_ssh_user=root
+10.31.101.113 ansible_ssh_user=root
+
+[workdev]
+169.55.234.108 ansible_ssh_user=root
+
+[ubuntu-mirrors]
+10.31.101.126 ansible_ssh_user=root
+
+[loadbalancer]
+10.31.101.128 ansible_ssh_user=root

@@ -1,2 +1,3 @@
 dependencies:
   - role: greghaynes
+  - role: vim

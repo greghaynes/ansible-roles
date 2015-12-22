@@ -4,12 +4,21 @@
   sudo: yes
   with_items:
     - zsh
+    - git-core
 - name: Install SuSe dependencies
   when: ansible_distribution == 'openSUSE'
   zypper: name={{ item }}
   sudo: yes
   with_items:
     - zsh
+    - git
+- name: Install RedHat dependencies
+  when: ansible_distribution == 'CentOS'
+  yum: name={{ item }}
+  sudo: yes
+  with_items:
+    - zsh
+    - git
 - name: Assert user
   user: name=greghaynes shell=/bin/zsh
   sudo: yes
