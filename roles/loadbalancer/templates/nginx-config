@@ -1,0 +1,14 @@
+upstream ubuntu-mirrors {
+{% for host in groups['ubuntu-mirrors'] %}
+    server {{ host }};
+{% endfor %}
+}
+
+server {
+    listen 80;
+    server_name ubuntu.mirrors.greghaynes.net ubuntu.mirrors.opus.greghaynes.net;
+
+    location / {
+        proxy_pass http://ubuntu-mirrors;
+    }
+}

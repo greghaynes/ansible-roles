@@ -1,0 +1,5 @@
+127.0.0.1 localhost localhost.localdomain {{ ansible_hostname }}
+
+{% for host in groups['loadbalancer'] %}
+{{ hostvars[host]['ansible_default_ipv4']['address'] }} ubuntu.mirrors.opus.greghaynes.net
+{% endfor %}

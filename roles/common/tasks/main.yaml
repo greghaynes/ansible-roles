@@ -1,0 +1,5 @@
+- name: Set /etc/hosts
+  template: src=hosts dest=/etc/hosts owner=root group=root mode=0644
+
+- name: Set /etc/apt/sources.list
+  copy: src=sources.list dest=/etc/apt/sources.list owner=root group=root mode=0644

@@ -4,3 +4,14 @@
   sudo: yes
   with_items:
     - apt-mirror
+    - nginx
+- name: Make mirror mount dir
+  file: state=directory path=/mnt/mirror owner=root group=root mode=0755
+- name: Mount mirror volume
+  mount: name=/mnt/mirror src=/dev/vdb1 state=mounted fstype=ext4
+- name: Create apt-mirror config
+  copy: src=mirror.list dest=/etc/apt/mirror.list owner=root group=root mode=0755
+- name: Copy nginx config
+  copy: src=nginx-config dest=/etc/nginx/sites-enabled/default owner=root group=root mode0644
+- name: reload nginx
+  service: name=nginx state=reloaded

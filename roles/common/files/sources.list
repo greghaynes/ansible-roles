@@ -1,0 +1,4 @@
+deb http://ubuntu.mirrors.opus.greghaynes.net/ubuntu/ trusty main restricted universe
+deb http://ubuntu.mirrors.opus.greghaynes.net/ubuntu/ trusty-updates main restricted universe
+deb http://ubuntu.mirrors.opus.greghaynes.net/ubuntu/ trusty-backports main restricted universe
+deb http://ubuntu.mirrors.opus.greghaynes.net/ubuntu/ trusty-security main restricted universe

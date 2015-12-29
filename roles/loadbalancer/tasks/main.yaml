@@ -3,10 +3,10 @@
   apt: name={{ item }}
   sudo: yes
   with_items:
-    - haproxy
+    - nginx
 
 - name: Install config
-  template: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg owner=root group=root mode=0644
+  template: src=nginx-config dest=/etc/nginx/sites-enabled/default owner=root group=root mode=0644
 
 - name:  Reload haproxy
-  service: name=haproxy state=reloaded
+  service: name=nginx state=reloaded
