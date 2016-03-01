@@ -1,0 +1,3 @@
+- hosts: home-nas
+  roles:
+    - define-vm

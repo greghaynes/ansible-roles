@@ -1,0 +1,10 @@
+arch: x86_64
+bridge: br-p3p1.4
+cpus: 1
+engine: kvm
+memory: 4096
+name: test0
+pool: Store0
+
+config_drive_dir: /etc/libvirt/config-drives
+base_volume_name: image-ubuntu-minimal

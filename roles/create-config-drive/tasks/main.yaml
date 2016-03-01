@@ -1,0 +1,20 @@
+- name: Create working tempdir
+  command: mktemp -d "{{ work_dir }}"/config-drive.XXXX
+  register: _config_drive_tmpdir
+- name: Create openstack/latest dir
+  file:
+    path: "{{ _config_drive_tmpdir.stdout }}/openstack/latest"
+    recurse: True
+    state: directory
+- name: Create meta_data.json
+  template:
+    src: meta_data.json
+    dest: "{{ _config_drive_tmpdir.stdout }}/openstack/latest/meta_data.json"
+- name: Output ISO
+  command: mkisofs -R -V config-2 -o "{{ destination }}" "{{ _config_drive_tmpdir.stdout }}"
+- name: Remove working tempdir
+  file:
+    path: "{{ _config_drive_tmpdir.stdout }}"
+    state: absent
+  when:
+    configdrive_cleanup

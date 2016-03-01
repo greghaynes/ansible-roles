@@ -1,0 +1,8 @@
+- name: clone base hd
+  command: virsh vol-clone {{ base_volume_name }} "vm-{{ name }}" --pool Store0
+- name: resize hd
+  command: lvresize -L10G "/dev/Store0/vm-{{ name }}"
+- name: define vm
+  virt: name=test
+        command=define
+        xml="{{ lookup('template', 'vm.xml') }}"
