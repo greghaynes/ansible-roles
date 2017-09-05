@@ -1,7 +1,7 @@
 <domain type='{{engine}}'>
-  <name>{{ name }}</name>
-  <memory unit='MiB'>{{ memory }}</memory>
-  <vcpu>{{ cpus }}</vcpu>
+  <name>devnode-{{ node_name }}</name>
+  <memory unit='MiB'>{{ node_memory }}</memory>
+  <vcpu>{{ node_cpus }}</vcpu>
   <os>
     <type arch='{{ arch }}'>hvm</type>
     <boot dev='hd'/>
@@ -17,15 +17,9 @@
   <on_reboot>restart</on_reboot>
   <on_crash>restart</on_crash>
   <devices>
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw' />
-      <source file='{{ config_drive_dir }}/{{ name }}.iso' />
-      <target dev='hdc' bus='ide' />
-      <readonly />
-    </disk>
-    <disk type='volume' device='disk'>
-      <driver name='qemu' type='raw' />
-      <source pool='{{ pool }}' volume='vm-{{ name }}' />
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' />
+      <source file='{{ disk_path }}' />
       <target dev='hda' bus='ide'/>
     </disk>
     <input type='mouse' bus='ps2'/>
@@ -40,7 +34,7 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
     </memballoon>
     <interface type='bridge'>
-      <source bridge='{{ bridge }}' />
+      <source bridge='br-guests' />
       <model type='virtio'/>
     </interface>
     <serial type='pty'>

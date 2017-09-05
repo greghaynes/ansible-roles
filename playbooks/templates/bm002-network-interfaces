@@ -1,0 +1,17 @@
+auto enp4s0
+iface enp4s0 inet dhcp
+iface enp4s0 inet6 auto
+
+auto enp5s0
+iface enp5s0 inet manual
+
+auto enp5s0.100
+iface enp5s0.100 inet manual
+    vlan-raw-device enp5s0
+
+auto br-guests
+iface br-guests inet manual
+    bridge_ports enp5s0.100
+    bridge_stp off
+    bridge_fd 0
+    bridge_maxwait 0

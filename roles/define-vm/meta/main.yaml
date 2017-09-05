@@ -1,4 +1,0 @@
-dependencies:
-  - role: create-config-drive
-    destination: "{{ config_drive_dir }}/{{ name }}.iso"
-    hostname: "{{ name }}"

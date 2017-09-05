@@ -1,3 +1,6 @@
 [home-nas]
 2601:1c2:1002:7d4:225:90ff:fef0:e004 ansible_ssh_user=root
+bm002 ansible_ssh_host=bm002.pdxhome.greghaynes.net
 
+[kube-cluster]
+kubemaster-1

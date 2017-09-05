@@ -1,8 +1,15 @@
-- name: clone base hd
-  command: virsh vol-clone {{ base_volume_name }} "vm-{{ name }}" --pool Store0
-- name: resize hd
-  command: lvresize -L10G "/dev/Store0/vm-{{ name }}"
+- name: Check arguments
+  fail: msg="{{ item }} is not defined"
+  when: '{{ item }} is undefined'
+  with_items:
+    - arch
+    - devnodes.cpus
+    - engine
+    - devnodes.memory
+    - disk_path
+  tags: [config-check]
+
 - name: define vm
-  virt: name=test
+  virt: name={{ node_name }}
         command=define
         xml="{{ lookup('template', 'vm.xml') }}"

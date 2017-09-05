@@ -1,0 +1,142 @@
+- hosts: bm002
+  gather_facts: False
+  become: True
+  tasks:
+    - name: Install python
+      raw: apt-get install -y python
+
+- hosts: bm002
+  become: True
+  tasks:
+    - name: clear out old networking config
+      file:
+        path: /etc/network/interfaces.d/{{ item }}
+        state: absent
+      with_items:
+        - eth0
+        - eth1
+    - name: disable systemd-networkd
+      systemd:
+        name: systemd-networkd
+        enabled: no
+    - name: install network packages
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - ifupdown
+        - vlan
+        - bridge-utils
+        - isc-dhcp-client
+    - name: write out networking config
+      template:
+        src: bm002-network-interfaces
+        dest: /etc/network/interfaces
+    - name: Install libvirt
+      package:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - qemu-kvm
+        - libvirt-bin
+        - qemu-utils
+        - python-libvirt
+    - name: Add user to libvirt
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        groups: libvirtd
+        append: yes
+
+
+- name: Create remote diskimage directories
+  gather_facts: False
+  hosts: bm002
+  tasks:
+    - file: path="{{ lookup('env','HOME') }}/devnodes/{{ item }}" state=directory mode=0755
+      with_items:
+        - config-drives
+        - disks
+        - images
+
+- name: Create local diskimage directories
+  run_once: true
+  gather_facts: False
+  hosts: all
+  tasks:
+    - file: path="{{ lookup('env','HOME') }}/devnodes/{{ item }}" state=directory mode=0755
+      delegate_to: localhost
+      with_items:
+        - logs
+        - images
+        - venvs
+
+- hosts: bm002
+  roles:
+    - role: disk-image-create
+      dibcreate_elements:
+        - ubuntu-minimal
+        - networkd-dhcp
+        - growroot
+        - vm
+        - devuser
+      dibcreate_extra_packages:
+        - openssh-server
+        - dialog
+      dibcreate_log_dest: "{{ lookup('env','HOME') }}/devnodes/logs/dib.log"
+      dibcreate_destination: "{{ lookup('env','HOME') }}/devnodes/images/image.qcow2"
+      dibcreate_venv_dir: "{{ lookup('env', 'HOME') }}/devnodes/venvs/diskimage-builder"
+      dibcreate_output_types:
+        - qcow2
+      dibcreate_env_vars:
+        DIB_DEV_USER_USERNAME: greghaynes
+        DIB_DEV_USER_PWDLESS_SUDO: 1
+        DIB_DEV_USER_PASSWORD: 'xf3r@l2'
+        DIB_DEV_USER_AUTHORIZED_KEYS: /home/greghaynes/.ssh/authorized_keys
+        DIB_DISTRIBUTION_MIRROR: http://ubuntu.osuosl.org/ubuntu
+
+- hosts: bm002
+  tasks:
+    - name: Copy image to remote host
+      copy:
+        src: "{{ lookup('env','HOME') }}/devnodes/images/image.qcow2"
+        dest: "{{ lookup('env','HOME') }}/devnodes/images/image.qcow2"
+
+- name: Create vm disk
+  gather_facts: False
+  hosts: bm002
+  tasks:
+    - command: cp "{{ lookup('env','HOME') }}/devnodes/images/image.qcow2" {{ lookup('env','HOME') }}/devnodes/disks/{{ node_name }}.qcow2
+      become: yes
+    - command: qemu-img resize "{{ lookup('env','HOME') }}/devnodes/disks/{{ node_name }}.qcow2" 20G
+      become: yes
+
+- name: Detect existing vm
+  gather_facts: False
+  hosts: bm002
+  tasks:
+    - virt: name="devnode-{{ node_name }}" command=status
+      register: _devnode_vm
+      ignore_errors: True
+
+- name: Cleanup existing vm
+  gather_facts: False
+  hosts: bm002
+  tasks:
+    - debug: msg="{{ _devnode_vm }}"
+    - virt: name="devnode-{{ node_name }}" state=destroyed
+      when: _devnode_vm is defined and _devnode_vm.status is defined
+    - virt: name="devnode-{{ node_name }}" command=undefine
+      when: _devnode_vm is defined and _devnode_vm.status is defined
+
+- name: Define vm
+  gather_facts: False
+  hosts: bm002
+  roles:
+    - role: define-vm
+      disk_path: "{{ lookup('env','HOME') }}/devnodes/disks/{{ node_name }}.qcow2"
+
+- name: Start vm
+  gather_facts: False
+  hosts: bm002
+  tasks:
+    - virt: name="devnode-{{ node_name }}" state=running
